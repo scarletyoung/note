@@ -3,7 +3,7 @@ title: 《MySQL技术内幕 InnoDB存储引擎》读书笔记
 date: 2023-10-07 10:30
 author: scarletyoung
 tags: t#MySQL;t#InnoDB;t#Database;t#ReadingNote;
-index: 000001
+index: COM000001
 description: 部分内容根据MySQL8.1文档和网上的资料进行了调整
 ---
 # MySQL体系结构和存储引擎
@@ -12,7 +12,7 @@ description: 部分内容根据MySQL8.1文档和网上的资料进行了调整
 ## InnoDB体系架构
 简单的架构如下图所示
 
-![InnoDB简单架构](./img/000001-InnoDB简单架构.png)
+![InnoDB简单架构](./img/COM000001-InnoDB简单架构.png)
 
 内存池主要负责维护所有进程/线程需要访问的内部数据结构，对磁盘上的进行缓存，重做日志缓存等。
 
@@ -44,16 +44,16 @@ page made young操作：页面从LRU列表的旧列表加入到新列表的操�
 page not made young操作：当因innodb_old_blocks_time设置而没有将页面从旧列表到新列表的操作。
 
 通过命令``SHOW ENGINE INNODB STATUS``的BUFFER POOL AND MEMROY部分可以查看缓冲池的运行指标，如下图所示
-![INNODB缓冲池状态](./img/000001-INNODB缓冲池状态.png)
+![INNODB缓冲池状态](./img/COM000001-INNODB缓冲池状态.png)
 
 通常情况下缓冲区命中率应该超过95%，否则说明存在LRU列表被污染的问题。
 
 ``SHOW ENGINE INNODB STATUS``命令显示的过去某个时间范围内的状态，具体信息INNODB_MONITOR_OUTPUT部分开头显示。
-![INNODB MONITOR OUTPUT](./img/000001-INNODB%20MONITOR%20OUTPUT.png)
+![INNODB MONITOR OUTPUT](./img/COM000001-INNODB_MONITOR_OUTPUT.png)
 
 INNODB支持压缩页，即将16KB的页压缩为1KB、2KB、4KB和8KB。对于非16KB的页，通过unzip_LRU列表管理。
 
-unzip_LRU列表对不同的大小的页进行分别管理，通过[伙伴算法]()进行内存的分配。
+unzip_LRU列表对不同的大小的页进行分别管理，通过[伙伴算法](## "TODO")进行内存的分配。
 
 当LRU中的页被修改后，不会立即写回磁盘，而是通过检查点机制将脏页刷新会磁盘。使用Flush列表对脏页进行管理，脏页同时存在于LRU列表和Flush列表。``SHOW ENGINE INNODB STATUS``中的Modified db pages显示了脏页的数量。
 
@@ -215,7 +215,7 @@ void master_thread() {
 
 变更缓冲在内存中是缓冲池的一部分，在硬盘上是系统表空间中一部分，以一个B+树的方式存储，键值由space，marker和offset组成，其中space表示插入记录所在的表空间id，占用4字节；marker用于兼容旧版本的插入缓冲，占用一个字节；offset表示页所在的偏移量，占用四4字节。
 当插入次级索引时，如果也不在缓冲池中，根据上述规则构造一个键，然后将记录插入到B+树中。叶子节点中记录的结构如下图所示，
-![变更缓冲中叶子节点记录结构](./img/000001-叶子节点记录结构.png)
+![变更缓冲中叶子节点记录结构](./img/COM000001-叶子节点记录结构.png)
 
 其中metadata占用四个字节，存储了三个字节：IBUF_REC_OFFEST_COUNT占用两个字节，表示记录进入变更缓冲的顺序，通过这个顺序进行回放；IBUF_REC_OFFSET_TYPE占用一个字节；IBUF_REC_OFFSET_FLAGS占用一个字节。
 
@@ -1424,7 +1424,7 @@ redo日志以日志组（实际只有一个日志组）的形式组织，通过�
 
 每个文件会在开头预留四个块存储额外的信息，第一个块称为头块，第一个文件中的第二个和第四个块存储检查点信息，第三个块未使用，其他文件的后三个块未使用。如下图所示
 
-![日志文件格式说明](img/000001-日志文件格式说明.png)
+![日志文件格式说明](img/COM000001-日志文件格式说明.png)
 
 [redo log]:# (以下是8.1文档的重做日志说明)
 #### [新redo日志架构](## "8.1文档内容")
@@ -1574,7 +1574,7 @@ InnoDB的冷备只需要复制frm文件，共享表空间文件，独立表空�
 
 复制是异步实时的，主从之间存在延迟，如果主库压力较大，则主从之间的延时可能加大。
 
-![复制示意图](./img/000001-复制示意图.png)
+![复制示意图](./img/COM000001-复制示意图.png)
 
 如上图所示，从库有两个线程，
 1. IO线程，负责读取主服务器的二进制日志，并将其保存为中继日志。
