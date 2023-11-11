@@ -2,7 +2,11 @@
 title: 《MySQL技术内幕 InnoDB存储引擎》读书笔记
 date: 2023-10-07 10:30
 author: scarletyoung
-tags: t#MySQL;t#InnoDB;t#Database;t#ReadingNote;
+keywords: 
+    - MySQL
+    - InnoDB
+    - Database
+    - ReadingNote
 index: COM000001
 description: 部分内容根据MySQL8.1文档和网上的资料进行了调整
 ---
